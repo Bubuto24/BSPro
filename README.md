@@ -3,24 +3,42 @@
 
 * Provides installation and checking of updates
 
-* [Link](https://portswigger.net/burp/pro) to official website
+* [Link](https://portswigger.net/burp/pro) to official website 
 
-## Installation Guide
+<br>
 
+# Installation Guide 
+* There are two ways to run the installation.
+<br>
+
+## One-liner installation (recommended)
 * Open `powershell` in Administrator Mode and run the following command
 
 ```
 irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 | iex
 ```
 
-## Update Guide
-* Checking of updates is disabled when you install with the key generator.
+## Run installation locally
+* Run this command to download the installation script
+```
+irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.ps1
+```
+* Then use this command to run the installation script you just downloaded
+```
+./install.ps1
+```
+<br>
 
-* However, this is included in `BurpSuitePro.vbs`, which will be the launcher for BS Pro.
+# Installation notes
+* A shortcut will be created at your desktop after the installation of BSPro.
+* Checking of updates in BSPro will <ins>**not work**</ins>.
+<br>
 
-* Launching of BSPro and checking of updates is included together with the launcher.
+# Update Guide
+* Running BSPro with key generator results in the **disablement** of checking of updates
 
-* A shortcut will be created at your desktop during installation.
+* As a workaround, the installation script will provide a launcher (VBS script) that will provide for both the launching of BSPro and checking of updates.
+<br>
 
 # References
 [BSPro](https://github.com/xiv3r/Burpsuite-Professional) by xiv3r
