@@ -1,3 +1,5 @@
+# Function to retrieve the latest stable release of Burp from portswigger's releases
+# Original script omits version query string, which does not download the latest version
 function Get-LatestBurpVersion {
     try {
         $response = Invoke-WebRequest -Uri "https://portswigger.net/burp/releases/data?pageSize=5"
@@ -31,7 +33,6 @@ Set-Location "C:/Burp"
 $allPackages = Get-Package
 
 # Check JDK-21 Availability or Download JDK-21
-# $jdk21 = Get-WmiObject -Class Win32_Product -filter "Vendor='Oracle Corporation'" | where Caption -clike "Java(TM) SE Development Kit 21*"
 $jdk21 = $allPackages | Where-Object {$_.Name -clike "Java(TM) SE Development Kit 21*"}
 if (-not ($jdk21)) {
     Write-Host "`t`tDownloading Java JDK-21 ...."
@@ -42,7 +43,6 @@ if (-not ($jdk21)) {
 }
 else {
     Write-Host "Required JDK-21 is installed"
-    # $jdk21
 }
 
 # Check JRE-8 Availability or Download JRE-8
@@ -51,13 +51,12 @@ $jre8 = $allPackages | Where-Object {$_.Name -clike "Java 8 Update *"}
 if (-not ($jre8)) {
     Write-Host "`n`t`tDownloading Java JRE ...."
     Invoke-WebRequest "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247947_0ae14417abb444ebb02b9815e2103550" -OutFile jre-8.exe
-    Write-Host "`n`t`tJRE-8 Downloaded, lets start the Installation process"
+    Write-Host "`n`t`tJRE-8 Downloaded, lets start the installation process"
     Start-Process -Wait jre-8.exe
     Remove-Item jre-8.exe
 }
 else {
     Write-Host "`n`nRequired JRE-8 is installed`n"
-    # $jre8
 }
 
 # Downloading Burp Suite Professional
@@ -73,15 +72,23 @@ $path = "java --add-opens=java.desktop/javax.swing=ALL-UNNAMED--add-opens=java.b
 $path | Add-Content -Path Burp.bat
 Write-Host "`nBurp.bat file is created"
 
-# Download loader if it not exists
+# Download loader if it does not exist
 if (-not (Test-Path loader.jar)) {
     Write-Host "`nDownloading Loader ...."
-    Invoke-WebRequest -Uri "https://github.com/xiv3r/Burpsuite-Professional/raw/refs/heads/main/loader.jar" -OutFile loader.jar
+    Invoke-WebRequest -Uri "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/loader.jar" -OutFile loader.jar
     Write-Host "`nLoader is downloaded"
 }
 else {
     Write-Host "`nLoader is already downloaded"
 }
+
+# Download the necessary files
+Write-Host "`nDownloading relevant files..."
+Invoke-WebRequest -Uri "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/CheckUpdate.ps1" -OutFile CheckUpdate.ps1
+Invoke-WebRequest -Uri "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/BurpSuiteUpdate.ps1" -OutFile BurpSuiteUpdate.ps1
+Invoke-WebRequest -Uri "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/BurpSuitePro.vbs" -OutFile BurpSuitePro.vbs
+Invoke-WebRequest -Uri "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/bspro.ico" -OutFile bspro.ico
+Write-Host "`nFiles are downloaded."
 
 # Create shortcut in desktop
 Write-Host "`nCreating shortcut in Desktop..."
@@ -89,7 +96,7 @@ $desktopPath = [System.Environment]::GetFolderPath("Desktop")
 $WshShell = New-Object -COMObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$desktopPath/Burp Suite Professional.lnk")
 $Shortcut.TargetPath = "$pwd/BurpSuitePro.vbs"
-$Shortcut.IconLocation = "$pwd/burp_suite_professional.ico"
+$Shortcut.IconLocation = "$pwd/bspro.ico"
 $Shortcut.WorkingDirectory = $pwd
 $Shortcut.Save()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) > $null
