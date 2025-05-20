@@ -27,7 +27,7 @@ function Get-LatestBurpVersion {
 Write-Host "Setting Wget Progress to Silent, Becuase it slows down Downloading by 50x`n"
 $ProgressPreference = 'SilentlyContinue'
 If (-not (Test-Path "C:/burp")) {
-    New-Item -Path "C:" -Name "Burp" -ItemType Directory
+    New-Item -Path "C:/" -Name "Burp" -ItemType Directory > $null
 }
 Set-Location "C:/Burp"
 $allPackages = Get-Package
