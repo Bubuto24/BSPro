@@ -97,7 +97,7 @@ $WshShell = New-Object -COMObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$desktopPath/Burp Suite Professional.lnk")
 $Shortcut.TargetPath = "$pwd/BurpSuitePro.vbs"
 $Shortcut.IconLocation = "$pwd/bspro.ico"
-$Shortcut.WorkingDirectory = $pwd
+$Shortcut.WorkingDirectory = "$pwd"
 $Shortcut.Save()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) > $null
 Write-Host "`nShortcut has been created."
