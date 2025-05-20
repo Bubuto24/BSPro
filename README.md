@@ -18,7 +18,7 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 | iex
 
 * However, this is included in `BurpSuitePro.vbs`, which will be the launcher for BS Pro.
 
-* Launching of BSPro and checking of updates is merged together with the launcher.
+* Launching of BSPro and checking of updates is included together with the launcher.
 
 * A shortcut will be created at your desktop during installation.
 
