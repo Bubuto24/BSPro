@@ -35,7 +35,7 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.
 <br>
 
 # Update Guide
-* Running BSPro with key generator results in the **disablement** of checking of updates
+* Running BSPro with key generator results in the **disablement** of checking of updates.
 
 * As a workaround, the installation script will provide a launcher (VBS script) that will provide for both the launching of BSPro and checking of updates.
 <br>
