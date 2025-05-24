@@ -93,7 +93,14 @@ else {
     Write-Host "`nDownloading the latest version of Burp Suite Professional...."
     Invoke-WebRequest "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$latestBurpVersion" `
         -OutFile "burpsuite_pro_v$latestBurpVersion.jar"
-    If (Test-Path "burpsuite_pro_v$currentBurpVersion.jar") { Remove-Item "burpsuite_pro_v$currentBurpVersion.jar" }
+    if (Test-Path "burpsuite_pro_v$currentBurpVersion.jar") {
+        Remove-Item "burpsuite_pro_v$currentBurpVersion.jar" 
+        Write-Host "`nBurp Suite $currentBurpVersion has been removed."
+    }
+    else {
+        Write-Host "Cannot find old version of burp suite." -ForegroundColor Yellow
+    }
+    
     Write-Host "`nBurp Suite Professional download successful." -ForegroundColor Green
 
     # Set burp.bat contents

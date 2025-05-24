@@ -10,9 +10,11 @@ Set fso = CreateObject("Scripting.FileSystemObject")
 Set WshShell = CreateObject("WScript.Shell")
 
 If fso.FolderExists("C:/Burp") Then
-    userResult = MsgBox("Check update for Burp?", vbYesNo + vbQuestion, "Burp Suite Professional")
+    userResult = MsgBox("Check update for Burp?", vbYesNoCancel + vbQuestion, "Burp Suite Professional")
     If userResult = vbNo Then
         LaunchBurp
+        WScript.Quit
+    ElseIf userResult = vbCancel Then
         WScript.Quit
     End If
 Else
