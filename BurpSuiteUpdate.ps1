@@ -38,7 +38,7 @@ function Test-BurpSuiteRunning {
 function Get-CurrentBurpVersion {
     $filename = Get-ChildItem -Path C:/Burp -Name "burpsuite*.jar"
     if ($filename) {
-        $version = $filename.SubString($filename.IndexOf("v") + 1, $filename.IndexOf(".") - 1 - $filename.IndexOf("v"))
+        $version = $filename.SubString($filename.IndexOf("v") + 1, $filename.LastIndexOf(".") - 1 - $filename.IndexOf("v"))
         return $version
     }
     return "Unknown"
