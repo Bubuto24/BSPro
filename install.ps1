@@ -99,6 +99,7 @@ function Add-GithubFiles {
         "loader.jar"          = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/loader.jar"
         "CheckUpdate.ps1"     = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/CheckUpdate.ps1"
         "BurpSuiteUpdate.ps1" = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/BurpSuiteUpdate.ps1"
+        "HelperFilesUpdate.ps1"    = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/HelperFilesUpdate.ps1"
         "BurpSuitePro.vbs"    = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/BurpSuitePro.vbs"
         "bspro.ico"           = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/bspro.ico"
     }
