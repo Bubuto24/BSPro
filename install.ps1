@@ -26,7 +26,6 @@ function Get-LatestBurpVersion {
     }
 }
 
-
 function Install-JRE8 {
     $jre8 = $SystemPackages | Where-Object { $_.Name -clike "Java 8 Update *" }
     if (-not ($jre8)) {
@@ -73,7 +72,7 @@ function Add-Folder {
     New-Item -Path "C:\" -Name "Burp" -ItemType Directory > $null
 }
 
-function Add-BurpFile {
+function Add-Burp {
     Write-Host "Downloading Burp Suite Professional..."
     $url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$version"
     Invoke-WebRequest -Uri $url -OutFile "burpsuite_pro_v$version.jar"
@@ -115,7 +114,7 @@ function Add-GithubFiles {
 }
 
 function Add-Files {
-    Add-BurpFile
+    Add-Burp
     Add-BatchFile
     Add-GithubFiles
 }

@@ -1,3 +1,4 @@
+# Script to check and prompt for latest updates
 function Get-LatestBurpInfo {
     try {
         $url = "https://portswigger.net/burp/releases/data?pageSize=5"
