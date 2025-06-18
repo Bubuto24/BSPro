@@ -107,7 +107,7 @@ function Add-GithubFiles {
             Invoke-WebRequest -Uri $file.Value -OutFile $file.Key -UseBasicParsing -ErrorAction Stop
         }
         catch {
-            Write-Warning "Failed to download $($file.Key): $_"
+            Write-Host "Failed to download $($file.Key): `n$($_.Exception.Message)" -ForegroundColor Red
         }
     }
     Write-Host "Neccesary files have been added."
