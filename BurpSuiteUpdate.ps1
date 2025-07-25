@@ -102,7 +102,9 @@ function Update-Burp {
 
     Write-Host "Burp Suite Professional has been updated to $latestBurpVersion." -ForegroundColor Green
     Start-Process ./Burp.bat -WindowStyle Hidden
-    Exit-Program
+    Write-Host "`nThis window will close in 3 seconds." -ForegroundColor Cyan
+    Start-Sleep 3
+    Exit
 }
 
 function Main {
