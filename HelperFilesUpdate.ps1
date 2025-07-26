@@ -21,7 +21,6 @@ $script:writer = [System.IO.StreamWriter]::new($stringAsStream)
 $writer.AutoFlush = $true
 
 $failed = @()
-$filesUpdated = $false
 
 foreach ($file in $files.GetEnumerator()) {
     try {
@@ -32,7 +31,6 @@ foreach ($file in $files.GetEnumerator()) {
         if ($localFileHash -ne $remoteFileHash) {
             Set-Content -Value $response -Path $filePath -NoNewline
             Write-Host "$($file.Key) has been updated." -ForegroundColor Green
-            $filesUpdated = $true
         }
     }
     catch {
@@ -52,9 +50,6 @@ if ($failed.Count) {
     foreach ($file in $failed) {
         Write-Host $file -ForegroundColor Red
     }
-}
-elseif ($filesUpdated) {
-    Write-Host "`nAll helper files have been updated." -ForegroundColor Green
 }
 else {
     Write-Host "All files are up to date!" -ForegroundColor Green
