@@ -1,6 +1,6 @@
 # Script to update helper files
 
-function New-RemoteFileHash {
+function Get-RemoteFileHash {
     param(
         [Parameter(Mandatory)]
         [string]$remoteFileContent
@@ -28,7 +28,7 @@ foreach ($file in $files.GetEnumerator()) {
         $filePath = Join-Path C:\Burp $file.Key
         $localFileHash = $(Get-FileHash $filePath).Hash
         $response = Invoke-RestMethod -Uri $file.Value -ErrorAction Stop
-        $remoteFileHash = New-RemoteFileHash -remoteFileContent $response
+        $remoteFileHash = Get-RemoteFileHash -remoteFileContent $response
         if ($localFileHash -ne $remoteFileHash) {
             Set-Content -Value $response -Path $filePath -NoNewline
             Write-Host "$($file.Key) has been updated." -ForegroundColor Green
