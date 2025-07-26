@@ -88,6 +88,10 @@ function Edit-BatchFileCommand {
     Set-Content -Value $burpCommand -Path Burp.bat
 }
 
+function Update-HelperFiles {
+    powershell ./HelperFilesUpdate.ps1
+}
+
 function Update-Burp {
     Write-Host "NOTE: PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." `
         "`nIT WILL SCREW UP THE WHOLE PROCESS.`n" -ForegroundColor Cyan
@@ -99,6 +103,7 @@ function Update-Burp {
     Remove-OldBurp
     Add-LatestBurp
     Edit-BatchFileCommand
+    Update-HelperFiles
 
     Write-Host "Burp Suite Professional has been updated to $latestBurpVersion." -ForegroundColor Green
     Start-Process ./Burp.bat -WindowStyle Hidden
