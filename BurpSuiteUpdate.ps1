@@ -89,6 +89,10 @@ function Edit-BatchFileCommand {
 }
 
 function Update-HelperFiles {
+    if (-not (Test-Path .\HelperFilesUpdate.ps1)) {
+        $url = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/HelperFilesUpdate.ps1"
+        Invoke-RestMethod $url -OutFile .\HelperFilesUpdate.ps1
+    }
     powershell ./HelperFilesUpdate.ps1
 }
 
