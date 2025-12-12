@@ -11,9 +11,9 @@ function Get-RemoteFileHash {
 }
 
 $files = @{
-    "CheckUpdate.ps1"     = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/CheckUpdate.ps1"
-    "BurpSuiteUpdate.ps1" = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/BurpSuiteUpdate.ps1"
-    "BurpSuitePro.vbs"    = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/BurpSuitePro.vbs"
+    "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/CheckUpdate.ps1"
+    "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/BurpSuiteUpdate.ps1"
+    "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/BurpSuitePro.vbs"
 }
 
 $script:stringAsStream = [System.IO.MemoryStream]::new()
