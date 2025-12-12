@@ -3,7 +3,7 @@
 function Get-LatestBurpVersion {
     try {
         $url = "https://portswigger.net/burp/releases/data?pageSize=5"
-        $response = Invoke-WebRequest -Uri $url -ErrorAction Stop
+        $response = Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop
 
         if ($response.StatusCode -eq 200) {
             $json = $response.Content | ConvertFrom-Json
@@ -90,7 +90,7 @@ function Edit-BatchFileCommand {
 
 function Update-HelperFiles {
     if (-not (Test-Path .\HelperFilesUpdate.ps1)) {
-        $url = "https://github.com/Bubuto24/BSPro/raw/refs/heads/main/HelperFilesUpdate.ps1"
+        $url = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/HelperFilesUpdate.ps1"
         Invoke-RestMethod $url -OutFile .\HelperFilesUpdate.ps1
     }
     powershell ./HelperFilesUpdate.ps1

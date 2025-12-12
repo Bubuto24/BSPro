@@ -1,8 +1,9 @@
 # Script to check and prompt for latest updates
+
 function Get-LatestBurpInfo {
     try {
         $url = "https://portswigger.net/burp/releases/data?pageSize=5"
-        $response = Invoke-WebRequest -Uri $url -ErrorAction Stop
+        $response = Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop
 
         if ($response.StatusCode -eq 200) {
             $json = $response.Content | ConvertFrom-Json
