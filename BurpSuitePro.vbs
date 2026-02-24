@@ -43,5 +43,5 @@ Set WshShell = Nothing
 Set fso = Nothing
 
 Sub LaunchBurp()
-    WshShell.Run chr(34) & "C:\burp\burp.bat" & Chr(34), 0
+    WshShell.Run Chr(34) & "C:\burp\burp.bat" & Chr(34), 0
 End Sub
