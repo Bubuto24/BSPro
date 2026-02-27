@@ -1,97 +1,68 @@
 # Script to check and prompt for latest updates
-
-function Get-LatestBurpInfo {
-    try {
-        $url = "https://portswigger.net/burp/releases/data?pageSize=5"
-        $response = Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop
-
-        if ($response.StatusCode -eq 200) {
-            $json = $response.Content | ConvertFrom-Json
-            $stableReleases = $json.ResultSet.Results | Where-Object {
-                $_.releaseChannels -eq "Stable"
-            }
-
-            foreach ($release in $stableReleases) {
-                if ($release.categories -contains "Professional") {
-                    return @{
-                        version = $release.version
-                        url     = $release.url
-                    }
-                }
-            }
-        }
-        else {
-            throw "HTTP Error $($response.StatusCode): $($response.StatusDescription)"
-        }
-    }
-    catch {
-        Write-Host "Error occurred in $($MyInvocation.MyCommand.Name)" -ForegroundColor Red
-        Write-Host $_.Exception.Message -ForegroundColor Red
-        Write-Host "Launching Burp..."
-        Start-Sleep 3
-        Exit
-    }
-}
+Import-Module $PSScriptRoot/Common.psm1 -Force
 
 function Show-Versions {
     param(
         [Parameter(Mandatory)]
-        [Object[]]$files
+        [Object[]]$Files
     )
-    Write-Host "`nVersions:"
-    foreach ($file in $files) {
-        Write-Host $file.SubString($file.IndexOf("v") + 1, $file.LastIndexOf(".") - 1 - $file.IndexOf("v")) -ForegroundColor Yellow
+    Write-Host "Versions:"
+    foreach ($File in $Files) {
+        Write-Host $(Get-VersionFromFilename -Filename $File) -ForegroundColor Yellow
     }
     Write-Host
 }
 
-function Get-CurrentBurpVersion {
-    $filename = Get-ChildItem -Path C:/Burp -Name "burpsuite*.jar"
-    if ($filename) {
-        if ($filename.Count -gt 1) {
-            Write-Warning "Multiple versions of burp suite detected. Only the latest is selected for comparison."
-            Show-Versions -Files $filename
-            $filename = $filename[$filename.Count - 1]
-        }
-        $version = $filename.SubString($filename.IndexOf("v") + 1, $filename.LastIndexOf(".") - 1 - $filename.IndexOf("v"))
-        return $version
+function Get-LocalBurpVersion {
+    $Filename = Get-ChildItem -Path $BurpPath -Name "burpsuite*.jar"
+    if ($Filename -and $($Filename.Count -gt 1)) {
+        Write-Warning "Multiple versions of BurpSuite detected. Only the latest is selected for comparison."
+        Show-Versions -Files $Filename
+        $Filename = $Filename[$Filename.Count - 1]
     }
+    $Version = Get-VersionFromFilename -Filename $Filename
+    return $Version
 }
 
 function Get-UpdateAnswer {
     param(
         [Parameter(Mandatory)]
-        [string]$url
+        [string]$Url
     )
     Write-Host "Do you want to update?"
-    $url = "https://portswigger.net" + $url
-    $yes = @("Y", "YES")
-    $no = @("N", "NO")
-    $view = @("V", "VIEW RELEASE NOTES")
-    $exit = @("E", "EXIT")
+    $Url = "https://portswigger.net" + $Url
+    $Yes = @("Y", "YES")
+    $No = @("N", "NO")
+    $View = @("V", "VIEW RELEASE NOTES")
+    $Exit = @("E", "EXIT")
     do {
-        [string]$userInput = Read-Host -Prompt "[Y] Yes [N] No [V] View Release Notes [E] Exit"
-        $userInput = $userInput.Trim()
-        if ($userInput -in $view) { Start-Process $url }
-    } until ($userInput -in ($yes + $no + $exit))
-    return $userInput
+        [string]$UserInput = Read-Host -Prompt "[Y] Yes [N] No [V] View Release Notes [E] Exit"
+        $UserInput = $UserInput.Trim()
+        if ($UserInput -in $View) { Start-Process $Url }
+    } until ($UserInput -in ($Yes + $No + $Exit))
+    return $UserInput
 }
 
 function Main {
     Write-Host "Checking for updates...`n"
-    $latestBurpInfo = Get-LatestBurpInfo
-    $script:latestBurpVersion = $latestBurpInfo["version"]
-    $script:currentBurpVersion = Get-CurrentBurpVersion
-    if ($latestBurpVersion -eq $currentBurpVersion) {
+    $LatestBurpInfo = Get-LatestBurpInfo
+    if ($LatestBurpInfo -eq 1) {
+        Write-Host "Launching Burp..."
+        Start-Sleep 3
+        Exit
+    }
+    $script:LatestBurpVersion = $LatestBurpInfo.Version  
+    $script:LocalBurpVersion = Get-LocalBurpVersion
+    if ($LatestBurpVersion -eq $LocalBurpVersion) {
         Write-Host "Burp Suite Professional is up to date." -ForegroundColor Green
         Start-Sleep 3
         Exit
     }
 
-    Write-Host "The newest version of BurpSuite is $latestBurpVersion" -ForegroundColor Cyan
-    Write-Host "Your current version of BurpSuite is $currentBurpVersion.`n" -ForegroundColor Yellow
-    $userInput = Get-UpdateAnswer -Url $latestBurpInfo["url"]
-    switch ($userInput) {
+    Write-Host "The newest version of BurpSuite is $LatestBurpVersion" -ForegroundColor Cyan
+    Write-Host "Your version of BurpSuite is $LocalBurpVersion.`n" -ForegroundColor Yellow
+    $UserInput = Get-UpdateAnswer -Url $LatestBurpInfo.Url
+    switch ($UserInput) {
         { $_ -in @("Y", "YES") } {
             Exit -1
         }

@@ -1,0 +1,77 @@
+function Get-LatestBurpInfo {
+    <#
+    .OUTPUTS
+    System.PSCustomObject: An object with information related to the stable version.
+    System.Int32: Returns 1 if there is an error.
+    #>
+    try {
+        $Url = "https://portswigger.net/burp/releases/data?pageSize=5"
+        $Response = Invoke-RestMethod -Uri $Url -ErrorAction Stop
+        $StableReleases = $Response.ResultSet.Results | Where-Object {
+            $_.releaseChannels -eq "Stable"
+        }
+        foreach ($Release in $StableReleases) {
+            if ($Release.categories -contains "Professional") {
+                return $Release
+            }
+        }
+        # $Response = Invoke-WebRequest -Uri $Url -UseBasicParsing -ErrorAction Stop
+        # if ($Response.StatusCode -eq 200) {
+        #     $Json = $Response.Content | ConvertFrom-Json
+        #     $StableReleases = $Json.ResultSet.Results | Where-Object {
+        #         $_.releaseChannels -eq "Stable"
+        #     }
+        #     foreach ($Release in $StableReleases) {
+        #         if ($Release.categories -contains "Professional") {
+        #             return $Release
+        #         }
+        #     }
+        # }
+        # For non error status codes that aren't 200
+        # else {
+        #     throw "HTTP $($Response.StatusCode): $($Response.StatusDescription)"
+        # }
+    }
+    catch {
+        Write-Host "Error occurred in $($MyInvocation.MyCommand.Name)" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        return 1
+    }
+}
+
+function Get-LatestBurpVersion {
+    $BurpInfo = Get-LatestBurpInfo
+    if ($BurpInfo -eq 1) {
+        return $BurpInfo
+    }
+    return $BurpInfo.Version
+}
+
+function Enter-Exit {
+    <#
+    .SYNOPSIS
+    Exits the program only when the users presses enter.
+    .PARAMETER ExitCode
+    Specifies the exit code for the script. Default is 0.
+    #>
+    param(
+        [Int32]$ExitCode = 0
+    )
+    Write-Host "`nPress Enter to exit..."
+    do {
+        $UserKey = ([System.Console]::ReadKey()).Key
+    } until ($UserKey -eq "Enter")
+    Exit $ExitCode
+}
+
+function Get-VersionFromFilename {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Filename
+    )
+    return $Filename.SubString($Filename.IndexOf("v") + 1, $Filename.LastIndexOf(".") - 1 - $Filename.IndexOf("v"))
+}
+
+$BurpPath = "C:\Burp"
+$BurpPathTemp = "$BurpPath.old"
+Export-ModuleMember -Function * -Variable *
