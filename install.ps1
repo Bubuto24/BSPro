@@ -1,15 +1,35 @@
-[CmdletBinding()]
-param()
-
-Import-Module $PSScriptRoot/Common.psm1 -Force
+function Get-LatestBurpInfo {
+    <#
+    .OUTPUTS
+    System.PSCustomObject: An object with information related to the stable version.
+    System.Int32: Returns 1 if there is an error.
+    #>
+    try {
+        $Url = "https://portswigger.net/burp/releases/data?pageSize=5"
+        $Response = Invoke-RestMethod -Uri $Url -ErrorAction Stop
+        $StableReleases = $Response.ResultSet.Results | Where-Object {
+            $_.releaseChannels -eq "Stable"
+        }
+        foreach ($Release in $StableReleases) {
+            if ($Release.categories -contains "Professional") {
+                return $Release
+            }
+        }
+    }
+    catch {
+        Write-Host "Error occurred in $($MyInvocation.MyCommand.Name)" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        return 1
+    }
+}
 
 function Install-JDK21 {
     $JDK21 = $SystemPackages | Where-Object { $_.Name -clike "Java(TM) SE Development Kit 21*" }
     Write-Debug "Checking JDK-21"
     if (-not ($JDK21)) {
         Write-Host "Downloading JDK-21 installer ...."
-        $url = "https://download.oracle.com/java/21/archive/jdk-21_windows-x64_bin.exe"
-        Invoke-WebRequest -Uri $url -OutFile jdk-21.exe  
+        $Url = "https://download.oracle.com/java/21/archive/jdk-21_windows-x64_bin.exe"
+        Invoke-WebRequest -Uri $Url -OutFile jdk-21.exe  
         Write-Host "JDK-21 installer is downloaded, please install JDK-21 in the following window."
         Start-Process -Wait jdk-21.exe
         Remove-Item jdk-21.exe
@@ -24,8 +44,8 @@ function Install-JRE8 {
     Write-Debug "Checking JRE-8"
     if (-not ($JRE8)) {
         Write-Host "Downloading JRE-8 installer ...."
-        $url = "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247947_0ae14417abb444ebb02b9815e2103550"
-        Invoke-WebRequest -Uri $url -OutFile jre-8.exe
+        $Url = "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=247947_0ae14417abb444ebb02b9815e2103550"
+        Invoke-WebRequest -Uri $Url -OutFile jre-8.exe
         Write-Host "JRE-8 installer is downloaded, please install JRE-8 in the following window."
         Start-Process -Wait jre-8.exe
         Remove-Item jre-8.exe
@@ -42,7 +62,8 @@ function Install-JavaComponents {
     Write-Host "Necessary Java Components are installed."
 }
 
-function Move-ExistingFiles {
+function Rename-ExistingBurpFolder {
+    # Rename folder if detected
     if (Test-Path $BurpPath) {
         Write-Host "$BurpPath exists."
         Rename-Item $BurpPath "$BurpPathTemp"
@@ -133,20 +154,19 @@ function Start-BurpInstallation {
     Start-Process ./Burp.bat -WindowStyle Hidden
 }
 
-function Main {
-    $ProgressPreference = "SilentlyContinue"
-    $script:SystemPackages = Get-Package -Debug:$false
-    $script:Version = Get-LatestBurpVersion
-    if ($Version -eq 1) {
-        Enter-Exit -ExitCode 1
-    }
-    Move-ExistingFiles
-    Set-Location $BurpPath
-    Install-JavaComponents
-    Add-Files
-    Add-Shortcut
-    Remove-ExistingFiles
-    Start-BurpInstallation
+# Main flow
+$ProgressPreference = "SilentlyContinue"
+$BurpPath = "C:\Burp"
+$BurpPathTemp = "$BurpPath.old"
+$Version = Get-LatestBurpVersion
+if ($Version -eq 1) {
+    Pause
+    Exit 1
 }
-
-Main
+Rename-ExistingBurpFolder
+Set-Location $BurpPath
+Install-JavaComponents
+Add-Files
+Add-Shortcut
+Remove-ExistingFiles
+Start-BurpInstallation
