@@ -1,4 +1,4 @@
-function Get-LatestBurpInfo {
+function Get-LatestBurpVersion {
     <#
     .OUTPUTS
     System.PSCustomObject: An object with information related to the stable version.
@@ -12,7 +12,7 @@ function Get-LatestBurpInfo {
         }
         foreach ($Release in $StableReleases) {
             if ($Release.categories -contains "Professional") {
-                return $Release
+                return $Release.Version
             }
         }
     }
@@ -22,6 +22,7 @@ function Get-LatestBurpInfo {
         return 1
     }
 }
+
 
 function Install-JDK21 {
     $JDK21 = $SystemPackages | Where-Object { $_.Name -clike "Java(TM) SE Development Kit 21*" }
