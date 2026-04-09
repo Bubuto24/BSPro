@@ -1,3 +1,6 @@
+param (
+    [switch]$debug
+)
 function Get-LatestBurpVersion {
     <#
     .OUTPUTS
@@ -110,13 +113,18 @@ function Add-BatchFile {
 }
 
 function Add-GithubFiles {
+    $Branch = "main"
+    if ($debug) {
+        $Branch = "refactor"
+    }
     $Files = @{
-        "loader.jar"            = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/loader.jar"
-        "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/CheckUpdate.ps1"
-        "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/BurpSuiteUpdate.ps1"
-        "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/HelperFilesUpdate.ps1"
-        "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/BurpSuitePro.vbs"
-        "bspro.ico"             = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/bspro.ico"
+        "loader.jar"            = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/loader.jar"
+        "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/CheckUpdate.ps1"
+        "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuiteUpdate.ps1"
+        "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/HelperFilesUpdate.ps1"
+        "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuitePro.vbs"
+        "bspro.ico"             = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/bspro.ico"
+        "Common.psm1"           = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/Common.psm1"
     }
     foreach ($File in $Files.GetEnumerator()) {
         try {
