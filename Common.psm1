@@ -47,23 +47,6 @@ function Get-LatestBurpVersion {
     return $BurpInfo.Version
 }
 
-function Enter-Exit {
-    <#
-    .SYNOPSIS
-    Exits the program only when the users presses enter.
-    .PARAMETER ExitCode
-    Specifies the exit code for the script. Default is 0.
-    #>
-    param(
-        [Int32]$ExitCode = 0
-    )
-    Write-Host "`nPress Enter to exit..."
-    do {
-        $UserKey = ([System.Console]::ReadKey()).Key
-    } until ($UserKey -eq "Enter")
-    Exit $ExitCode
-}
-
 function Get-VersionFromFilename {
     param(
         [Parameter(Mandatory)]
