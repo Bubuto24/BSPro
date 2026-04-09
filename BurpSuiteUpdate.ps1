@@ -1,7 +1,4 @@
 # Script for updating burp suite
-[CmdletBinding()]
-param()
-
 Import-Module $PSScriptRoot/Common.psm1 -Force
 
 function Test-BurpInstanceRunning {
@@ -34,8 +31,8 @@ function Add-LatestBurp {
         if (Test-Path "burpsuite_pro_v$Version.jar") {
             Remove-Item "burpsuite_pro_v$Version.jar"
         }
-        Start-Sleep 3
-        Enter-Exit -ExitCode 1
+        Pause
+        Exit 1
     }
 }
 
@@ -47,7 +44,8 @@ function Request-AdminPrivileges {
     }
     catch [System.InvalidOperationException] {
         Write-Host "`nThis script requires you to run in Administrator mode." -ForegroundColor Yellow
-        Enter-Exit -ExitCode 1
+        Pause
+        Exit 1
     }
 }
 
@@ -105,7 +103,8 @@ function Update-Burp {
     $script:BurpBatchFile = Join-Path $BurpPath "Burp.bat"
     $script:Version = Get-LatestBurpVersion
     if ($Version -eq 1) {
-        Enter-Exit -ExitCode 1
+        Pause
+        Exit 1
     }
     Assert-Versions -NewVersion $Version -OldVersion $ExistingBurp
     Add-LatestBurp
@@ -125,7 +124,8 @@ function Main {
         Clear-Host
         if (Test-BurpRunning) {
             Write-Warning "Please close all running instances of Burp Suite Professional before you run this script."
-            Enter-Exit -ExitCode 1
+            Pause
+            Exit 1
         }
         else {
             Update-Burp

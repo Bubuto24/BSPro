@@ -51,8 +51,8 @@ function Main {
         Start-Sleep 3
         Exit
     }
-    $script:LatestBurpVersion = $LatestBurpInfo.Version  
-    $script:LocalBurpVersion = Get-LocalBurpVersion
+    $LatestBurpVersion = $LatestBurpInfo.Version
+    $LocalBurpVersion = Get-LocalBurpVersion
     if ($LatestBurpVersion -eq $LocalBurpVersion) {
         Write-Host "Burp Suite Professional is up to date." -ForegroundColor Green
         Start-Sleep 3
