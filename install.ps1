@@ -70,8 +70,11 @@ function Rename-ExistingBurpFolder {
     # Rename folder if detected
     if (Test-Path $BurpPath) {
         Write-Host "$BurpPath exists."
-        Rename-Item $BurpPath "$BurpPathTemp"
-        Write-Host "Temporarily moved $BurpPath to $BurpPathTemp"
+        if (-not (Test-Path $BurpPathTemp)) {
+            Rename-Item $BurpPath "$BurpPathTemp"
+            Write-Host "Temporarily moved $BurpPath to $BurpPathTemp"
+        }
+        Write-Host "$BurpPathTemp exists."
     }
     Add-Folder
     Write-Host "$BurpPath created."
