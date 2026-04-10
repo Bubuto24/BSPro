@@ -45,7 +45,7 @@ function Request-AdminPrivileges {
         $CmdArgs = @("-Nologo", "-File", $PSCommandPath)
         if ($debug)
         {
-            $CmdArgs += ("-debug")
+            $CmdArgs = @("-Nologo", "-NoExit", "-File", $PSCommandPath, "-debug")
         }
         Start-Process powershell -Verb runas -ArgumentList $CmdArgs
     }
@@ -135,7 +135,7 @@ function Main {
     }
     else {
         Clear-Host
-        if (Test-BurpRunning) {
+        if (Test-BurpInstanceRunning) {
             Write-Warning "Please close all running instances of Burp Suite Professional before you run this script."
             Pause
             Exit 1
