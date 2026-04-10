@@ -61,13 +61,15 @@ function Get-Branch {
         [bool]$DebugState
     )
     if ($DebugState) {
-        return "refactor"
+        return $DebugBranch
     }
     return "main"
 }
 
 $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
+# Rename these 2 variables
 $GithubUsername = "Bubuto24"
+$DebugBranch = "refactor"
 $ErrorActionPreference = "Stop"
 Export-ModuleMember -Function * -Variable *
