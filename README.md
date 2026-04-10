@@ -10,7 +10,7 @@
 
 1. Change the execution policy
 ```
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+Set-ExecutionPolicy Bypass -Scope CurrentUser
 ```
 2. Download the script
 ```
