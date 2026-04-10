@@ -1,4 +1,7 @@
 # Script for updating burp suite
+param (
+    [switch]$debug
+)
 Import-Module $PSScriptRoot/Common.psm1 -Force
 
 function Test-BurpInstanceRunning {
@@ -63,10 +66,16 @@ function Edit-BatchFileCommand {
 
 function Update-HelperFiles {
     if (-not (Test-Path .\HelperFilesUpdate.ps1)) {
-        $Url = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/HelperFilesUpdate.ps1"
+        $Branch = Get-Branch $debug
+        $Url = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/HelperFilesUpdate.ps1"
         Invoke-RestMethod $Url -OutFile .\HelperFilesUpdate.ps1
     }
-    powershell .\HelperFilesUpdate.ps1
+    if ($debug) {
+        powershell .\HelperFilesUpdate.ps1 -debug
+    }
+    else {
+        powershell .\HelperFilesUpdate.ps1
+    }
     if ($LASTEXITCODE -eq 1) {
         Write-Warning "There was a problem updating helper files."
     }
