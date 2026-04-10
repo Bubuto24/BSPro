@@ -166,6 +166,7 @@ function Start-BurpInstallation {
 $ProgressPreference = "SilentlyContinue"
 $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
+$CurrentDirectory = Get-Location
 $Version = Get-LatestBurpVersion
 if ($Version -eq 1) {
     Pause
@@ -178,3 +179,4 @@ Add-Files
 Add-Shortcut
 Remove-ExistingFiles
 Start-BurpInstallation
+Set-Location $CurrentDirectory
