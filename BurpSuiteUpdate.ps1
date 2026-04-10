@@ -43,8 +43,7 @@ function Request-AdminPrivileges {
     Write-Host "Requesting Administrator privileges..."
     try {
         $CmdArgs = @("-Nologo", "-File", $PSCommandPath)
-        if ($debug)
-        {
+        if ($debug) {
             $CmdArgs = @("-Nologo", "-NoExit", "-File", $PSCommandPath, "-debug")
         }
         Start-Process powershell -Verb runas -ArgumentList $CmdArgs
@@ -107,8 +106,8 @@ function Start-Burp {
 }
 
 function Update-Burp {
-    Write-Warning "PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." `
-        "`nIT WILL SCREW UP THE WHOLE PROCESS.`n"
+    Write-Warning "PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." +
+    "`nIT WILL SCREW UP THE WHOLE PROCESS.`n"
     $ProgressPreference = "SilentlyContinue"
 
     Set-Location $BurpPath
