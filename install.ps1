@@ -169,6 +169,7 @@ $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 $CurrentDirectory = Get-Location
 $Version = Get-LatestBurpVersion
+$SystemPackages = Get-Package
 if ($Version -eq 1) {
     Pause
     Exit 1
