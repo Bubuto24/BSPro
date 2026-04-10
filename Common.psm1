@@ -55,6 +55,17 @@ function Get-VersionFromFilename {
     return $Filename.SubString($Filename.IndexOf("v") + 1, $Filename.LastIndexOf(".") - 1 - $Filename.IndexOf("v"))
 }
 
+function Get-Branch {
+    param(
+        [Parameter(Mandatory)]
+        [bool]$DebugState
+    )
+    if ($DebugState) {
+        return "refactor"
+    }
+    return "main"
+}
+
 $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 Export-ModuleMember -Function * -Variable *
