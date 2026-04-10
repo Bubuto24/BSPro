@@ -164,6 +164,7 @@ function Start-BurpInstallation {
 
 # Main flow
 $ProgressPreference = "SilentlyContinue"
+$ErrorActionPreference = "Stop"
 $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 $CurrentDirectory = Get-Location
