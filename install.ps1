@@ -139,7 +139,7 @@ function Add-Files {
     Add-GithubFiles
 }
 
-function Add-Shortcut {
+function Add-RealShortcut {
     $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
     $WshShell = New-Object -COMObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut("$DesktopPath/Burp Suite Professional.lnk")
@@ -149,6 +149,17 @@ function Add-Shortcut {
     $Shortcut.Save()
     [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) > $null
     Write-Host "Shortcut has been created in desktop."
+}
+
+function Add-DebugShortcut {
+    $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
+    $WshShell = New-Object -COMObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut("$DesktopPath/BSPro Debug.lnk")
+    $Shortcut.TargetPath = "wscript $BurpPath\BurpSuitePro.vbs -debug"
+    $Shortcut.WorkingDirectory = $BurpPath
+    $Shortcut.Save()
+    [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) > $null
+    Write-Host "Debug shortcut has been created in desktop."
 }
 
 function Start-BurpInstallation {
@@ -182,7 +193,10 @@ Rename-ExistingBurpFolder
 Set-Location $BurpPath
 Install-JavaComponents
 Add-Files
-Add-Shortcut
+if ($debug) {
+    Add-DebugShortcut
+}
+Add-RealShortcut
 Remove-ExistingFiles
 Start-BurpInstallation
 Set-Location $CurrentDirectory
