@@ -72,7 +72,6 @@ function Rename-ExistingBurpFolder {
         Write-Host "$BurpPath exists."
         Rename-Item $BurpPath "$BurpPathTemp"
         Write-Host "Temporarily moved $BurpPath to $BurpPathTemp"
-        Add-Folder
     }
     Add-Folder
     Write-Host "$BurpPath created."
