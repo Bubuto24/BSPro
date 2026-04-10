@@ -159,7 +159,8 @@ function Add-DebugShortcut {
     $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
     $WshShell = New-Object -COMObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut("$DesktopPath/BSPro Debug.lnk")
-    $Shortcut.TargetPath = "wscript $BurpPath\BurpSuitePro.vbs -debug"
+    $Shortcut.TargetPath = "wscript.exe"
+    $Shortcut.Arguments = "$BurpPath\BurpSuitePro.vbs -debug"
     $Shortcut.WorkingDirectory = $BurpPath
     $Shortcut.Save()
     [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) > $null
