@@ -34,11 +34,12 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.
 
 # Debugging
 1. Create a new branch
-2. Edit this [line](https://github.com/Bubuto24/BSPro/blob/d85ba394502fa92d18827ab7bd132591c7f397be/Common.psm1#L64) to your <b><u>branch name</u></b>, and this [line]() to your <b><u>github username</u></b>.
+2. Edit the 2 variables in <u>Common.psm1 and install.ps1</u> to your <b><u>branch name</u></b> and your <b><u>github username</u></b>.
+3. Run  with `-debug` flag.
 
 # Debug
 ```
-irm https://github.com/Bubuto24/BSPro/raw/refs/heads/refactor/install.ps1 > install.ps1
+irm https://github.com/<GithubUsername>/BSPro/raw/refs/heads/<branch>/install.ps1 > install.ps1
 ```
 
 # References
