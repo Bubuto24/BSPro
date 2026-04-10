@@ -43,7 +43,11 @@ function Request-AdminPrivileges {
     Write-Host "Requesting Administrator privileges..."
     try {
         $CmdArgs = @("-Nologo", "-File", $PSCommandPath)
-        Start-Process powershell -Verb runas -ArgumentList $cmdArgs
+        if ($debug)
+        {
+            $CmdArgs += ("-debug")
+        }
+        Start-Process powershell -Verb runas -ArgumentList $CmdArgs
     }
     catch [System.InvalidOperationException] {
         Write-Host "`nThis script requires you to run in Administrator mode." -ForegroundColor Yellow
