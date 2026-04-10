@@ -37,9 +37,12 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.
 2. Edit the 2 variables in <u>Common.psm1 and install.ps1</u> to your <b><u>branch name</u></b> and your <b><u>github username</u></b>.
 3. Run  with `-debug` flag.
 
-# Debug
+# Debug steps
 ```
 irm https://github.com/<GithubUsername>/BSPro/raw/refs/heads/<branch>/install.ps1 > install.ps1
+```
+```
+./install.ps1
 ```
 
 # References
