@@ -111,10 +111,7 @@ function Add-BatchFile {
 }
 
 function Add-GithubFiles {
-    $Branch = "main"
-    if ($debug) {
-        $Branch = "refactor"
-    }
+    $Branch = Get-Branch
     $GithubUsername = "Bubuto24"
     $Files = @{
         "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
@@ -160,6 +157,13 @@ function Start-BurpInstallation {
     Start-process java.exe -ArgumentList "-jar loader.jar" -WindowStyle Hidden
     Write-Host "Start Burp Suite Professional"
     Start-Process ./Burp.bat -WindowStyle Hidden
+}
+
+function Get-Branch {
+    if ($debug) {
+        return "refactor"
+    }
+    return "main"
 }
 
 # Main flow
