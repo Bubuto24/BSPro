@@ -1,54 +1,59 @@
 # Script to update helper files
+param (
+    [switch]$debug
+)
+Import-Module $PSScriptRoot/Common.psm1 -Force
 
 function Get-RemoteFileHash {
     param(
         [Parameter(Mandatory)]
-        [string]$remoteFileContent
+        [string]$RemoteFileContent
     )
-    $writer.Write($remoteFileContent)
-    $stringAsStream.Position = 0
-    return $(Get-FileHash -InputStream $stringAsStream).Hash
+    $Writer.Write($RemoteFileContent)
+    $StringAsStream.Position = 0
+    return $(Get-FileHash -InputStream $StringAsStream).Hash
 }
 
-$files = @{
-    "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/CheckUpdate.ps1"
-    "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/BurpSuiteUpdate.ps1"
-    "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/BurpSuitePro.vbs"
+$Branch = Get-Branch $debug
+$Files = @{
+    "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/CheckUpdate.ps1"
+    "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuiteUpdate.ps1"
+    "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuitePro.vbs"
 }
 
-$script:stringAsStream = [System.IO.MemoryStream]::new()
-$script:writer = [System.IO.StreamWriter]::new($stringAsStream)
-$writer.AutoFlush = $true
+$StringAsStream = [System.IO.MemoryStream]::new()
+$Writer = [System.IO.StreamWriter]::new($StringAsStream)
+$Writer.AutoFlush = $true
 
-$failed = @()
+$Failed = @()
 
-foreach ($file in $files.GetEnumerator()) {
+foreach ($File in $Files.GetEnumerator()) {
     try {
-        $filePath = Join-Path C:\Burp $file.Key
-        $localFileHash = $(Get-FileHash $filePath).Hash
-        $response = Invoke-RestMethod -Uri $file.Value -ErrorAction Stop
-        $remoteFileHash = Get-RemoteFileHash -remoteFileContent $response
-        if ($localFileHash -ne $remoteFileHash) {
-            Set-Content -Value $response -Path $filePath -NoNewline
-            Write-Host "$($file.Key) has been updated." -ForegroundColor Green
+        $FilePath = Join-Path C:\Burp $File.Key
+        $LocalFileHash = $(Get-FileHash $FilePath).Hash
+        $Response = Invoke-RestMethod -Uri $File.Value -ErrorAction Stop
+        $RemoteFileHash = Get-RemoteFileHash -RemoteFileContent $Response
+        if ($LocalFileHash -ne $RemoteFileHash) {
+            Set-Content -Value $Response -Path $FilePath -NoNewline
+            Write-Host "$($File.Key) has been updated." -ForegroundColor Green
         }
     }
     catch {
-        Write-Host "Failed to update $($file.Key): `n$($_.Exception.Message)" -ForegroundColor Red
-        $failed += $file.Key
+        Write-Host "Failed to update $($File.Key): `n$($_.Exception.Message)" -ForegroundColor Red
+        $Failed += $File.Key
     }
     finally {
-        $stringAsStream.SetLength(0)
+        $StringAsStream.SetLength(0)
     }
 }
 
-$stringAsStream.Dispose()
-$writer.Dispose()
+$StringAsStream.Dispose()
+$Writer.Dispose()
 
-if ($failed.Count) {
+if ($Failed.Count) {
     Write-Host "`nThe following files have failed to update:"
-    foreach ($file in $failed) {
-        Write-Host $file -ForegroundColor Red
+    foreach ($File in $Failed) {
+        Write-Host $File -ForegroundColor Red
     }
 }
 else {
