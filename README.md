@@ -1,44 +1,40 @@
 # Overview
 * **Windows** Installation for BS Pro
 
-* Provides installation and checking of updates
-
 * [Link](https://portswigger.net/burp/pro) to official website 
 
 <br>
 
-# Installation Guide 
-* There are two ways to run the installation.
-<br>
+# Installation Guide
+### Open powershell and run the following commands
 
-## One-liner installation (recommended)
-* Open `powershell` in Administrator Mode and run the following command
-
+1. Change the execution policy
 ```
-irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 | iex
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
-
-## Run installation locally
-* Run this command to download the installation script
+2. Download the script
 ```
 irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.ps1
 ```
-* Then use this command to run the installation script you just downloaded
+3. Run the script
 ```
 ./install.ps1
 ```
 <br>
 
-# Installation notes
-* A shortcut will be created at your desktop after the installation of BSPro.
-* Checking of updates in BSPro will <ins>**not work**</ins>.
+# Features
+* Built-in checking of updates upon launching shortcut.
+* Shortcut to launcher(vbs) is created at desktop.
 <br>
 
 # Update Guide
-* Running BSPro with key generator results in the **disablement** of checking of updates.
-
-* As a workaround, the installation script will provide a launcher (VBS script) that will provide for both the launching of BSPro and checking of updates.
+* Just run the shortcut in your desktop.
+* Checking of updates in the software is disabled.
 <br>
+
+# Debugging
+1. Create a new branch
+2. Edit this [line](https://github.com/Bubuto24/BSPro/blob/d85ba394502fa92d18827ab7bd132591c7f397be/Common.psm1#L64) to your <b><u>branch name</u></b>, and this [line]() to your <b><u>github username</u></b>.
 
 # Debug
 ```

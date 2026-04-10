@@ -106,8 +106,8 @@ function Start-Burp {
 }
 
 function Update-Burp {
-    Write-Warning "PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." +
-    "`nIT WILL SCREW UP THE WHOLE PROCESS.`n"
+    Write-Warning ("PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." +
+    "`nIT WILL SCREW UP THE WHOLE PROCESS.`n")
     $ProgressPreference = "SilentlyContinue"
 
     Set-Location $BurpPath
