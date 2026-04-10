@@ -127,6 +127,7 @@ function Add-GithubFiles {
             Invoke-WebRequest -Uri $File.Value -OutFile $File.Key -UseBasicParsing -ErrorAction Stop
         }
         catch {
+            Write-Host $File.Value
             Write-Error "Failed to download $($File.Key): `n$($_.Exception.Message)"
         }
     }
