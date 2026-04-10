@@ -68,4 +68,5 @@ function Get-Branch {
 
 $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
+$GithubUsername = "Bubuto24"
 Export-ModuleMember -Function * -Variable *

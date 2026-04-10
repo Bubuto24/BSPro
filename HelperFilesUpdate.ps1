@@ -16,9 +16,9 @@ function Get-RemoteFileHash {
 
 $Branch = Get-Branch $debug
 $Files = @{
-    "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/CheckUpdate.ps1"
-    "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuiteUpdate.ps1"
-    "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuitePro.vbs"
+    "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
+    "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
+    "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
 }
 
 $StringAsStream = [System.IO.MemoryStream]::new()

@@ -117,14 +117,15 @@ function Add-GithubFiles {
     if ($debug) {
         $Branch = "refactor"
     }
+    $GithubUsername = "Bubuto24"
     $Files = @{
-        "loader.jar"            = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/loader.jar"
-        "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/CheckUpdate.ps1"
-        "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuiteUpdate.ps1"
-        "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/HelperFilesUpdate.ps1"
-        "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/BurpSuitePro.vbs"
-        "bspro.ico"             = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/bspro.ico"
-        "Common.psm1"           = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/Common.psm1"
+        "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
+        "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
+        "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
+        "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
+        "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
+        "bspro.ico"             = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/bspro.ico"
+        "Common.psm1"           = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
     }
     foreach ($File in $Files.GetEnumerator()) {
         try {

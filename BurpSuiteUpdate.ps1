@@ -67,7 +67,7 @@ function Edit-BatchFileCommand {
 function Update-HelperFiles {
     if (-not (Test-Path .\HelperFilesUpdate.ps1)) {
         $Branch = Get-Branch $debug
-        $Url = "https://raw.githubusercontent.com/Bubuto24/BSPro/$Branch/HelperFilesUpdate.ps1"
+        $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
         Invoke-RestMethod $Url -OutFile .\HelperFilesUpdate.ps1
     }
     if ($debug) {
