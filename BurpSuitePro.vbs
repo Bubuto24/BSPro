@@ -1,8 +1,10 @@
 command = "powershell -Nologo -File .\CheckUpdate.ps1"
+command2 = "powershell -Nologo -File .\BurpSuiteUpdate.ps1"
 ' Debugging purposes
 If WScript.Arguments.Count = 1 Then
     If LCase(WScript.Arguments(0)) = "-debug" Then
         command = command & " -debug"
+        command2 = command2 & " -debug"
     End If
 End If
 
@@ -31,7 +33,7 @@ Select Case ExitCode
         ' vbs doesn't support in opening powershell in administrator mode directly (requires nested calling)
         ' one workaround is to open burpsuiteupdate.ps1 in user mode, then elevate to admin mode
         ' so the ps instance in user mode will close and a new instance in admin mode will be generated
-        WshShell.Run "powershell -Nologo -File .\BurpSuiteUpdate.ps1", 1
+        WshShell.Run command2, 1
     Case -2
         WScript.Quit
     Case Else
@@ -43,5 +45,5 @@ Set WshShell = Nothing
 Set fso = Nothing
 
 Sub LaunchBurp()
-    WshShell.Run chr(34) & "C:\burp\burp.bat" & Chr(34), 0
+    WshShell.Run Chr(34) & "C:\burp\burp.bat" & Chr(34), 0
 End Sub

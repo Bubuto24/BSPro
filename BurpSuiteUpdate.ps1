@@ -1,119 +1,131 @@
 # Script for updating burp suite
+param (
+    [switch]$debug
+)
+Import-Module $PSScriptRoot/Common.psm1 -Force
 
-function Get-LatestBurpVersion {
+function Test-BurpInstanceRunning {
+    $BurpInstances = Get-CimInstance Win32_Process | Select-Object ProcessId, Name, CommandLine | `
+        Where-Object { $_.Name -eq "java.exe" -and $_.CommandLine -like "java*loader.jar*" }
+    $BurpRunning = $false
+    if ($BurpInstances) {
+        $BurpRunning = $true
+    }
+    return $BurpRunning
+}
+
+function Remove-OldBurp {
+    if ($ExistingBurp) {
+        Remove-Item $ExistingBurp -Force
+        Write-Host "Successfully removed old Burp Suite files."
+    }
+}
+
+function Add-LatestBurp {
     try {
-        $url = "https://portswigger.net/burp/releases/data?pageSize=5"
-        $response = Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop
-
-        if ($response.StatusCode -eq 200) {
-            $json = $response.Content | ConvertFrom-Json
-            $stableReleases = $json.ResultSet.Results | Where-Object {
-                $_.releaseChannels -eq "Stable"
-            }
-
-            foreach ($release in $stableReleases) {
-                if ($release.categories -contains "Professional") {
-                    return $release.version
-                }
-            }
-        }
-        else {
-            throw "HTTP Error $($response.StatusCode): $($response.StatusDescription)"
-        }
+        Write-Host "Downloading the latest version of Burp Suite Professional..."
+        $Url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$Version"
+        Invoke-WebRequest -Uri $Url -OutFile "burpsuite_pro_v$Version.jar" -ErrorAction Stop
+        Write-Host "`nBurp Suite Professional download successful." -ForegroundColor Green    
     }
     catch {
         Write-Host "Error occurred in $($MyInvocation.MyCommand.Name)" -ForegroundColor Red
         Write-Host $_.Exception.Message -ForegroundColor Red
-        Exit-Program -ExitCode 1
+        if (Test-Path "burpsuite_pro_v$Version.jar") {
+            Remove-Item "burpsuite_pro_v$Version.jar"
+        }
+        Pause
+        Exit 1
     }
-}
-
-function Test-BurpRunning {
-    $burpInstances = Get-CimInstance Win32_Process | Select-Object ProcessId, Name, CommandLine | `
-        Where-Object { $_.Name -eq "java.exe" -and $_.CommandLine -like "java*loader.jar*" }
-    $burpRunning = $false
-    if ($burpInstances) {
-        $burpRunning = $true
-    }
-    return $burpRunning
-}
-
-function Remove-OldBurp {
-    $files = Get-ChildItem -Path C:/Burp -Name "burpsuite*.jar"
-    if ($files) {
-        Remove-Item $files -Force
-    }
-    Write-Host "Successfully removed old Burp Suite files."
-}
-
-function Add-LatestBurp {
-    Write-Host "Downloading the latest version of Burp Suite Professional..."
-    $url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$latestBurpVersion"
-    Invoke-WebRequest -Uri $url -OutFile "burpsuite_pro_v$latestBurpVersion.jar"
-    Write-Host "`nBurp Suite Professional download successful." -ForegroundColor Green
 }
 
 function Request-AdminPrivileges {
     Write-Host "Requesting Administrator privileges..."
     try {
-        $cmdArgs = @("-Nologo", "-File", $PSCommandPath)
-        Start-Process powershell -Verb runas -ArgumentList $cmdArgs
+        $CmdArgs = @("-Nologo", "-File", $PSCommandPath)
+        if ($debug) {
+            $CmdArgs = @("-Nologo", "-NoExit", "-File", $PSCommandPath, "-debug")
+        }
+        Start-Process powershell -Verb runas -ArgumentList $CmdArgs
     }
     catch [System.InvalidOperationException] {
         Write-Host "`nThis script requires you to run in Administrator mode." -ForegroundColor Yellow
-        Exit-Program -ExitCode 1
+        Pause
+        Exit 1
     }
 }
 
 function Test-AdminPrivileges {
-    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-    return $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-function Exit-Program {
-    param(
-        [Int32]$ExitCode = 0
-    )
-    Write-Host "`nPress Enter to exit..."
-    do {
-        $userKey = ([System.Console]::ReadKey()).Key
-    } until ($userKey -eq "Enter")
-    Exit $ExitCode
+    $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    return $CurrentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
 function Edit-BatchFileCommand {
-    $burpBatContent = Get-Content Burp.bat
-    $burpCommand = $burpBatContent.Substring(0, $burpBatContent.LastIndexOf("`"C")) + `
-        "`"C:/burp/burpsuite_pro_v$latestBurpVersion.jar`""
-    Set-Content -Value $burpCommand -Path Burp.bat
+    $BatchFileContent = Get-Content Burp.bat
+    $Command = $BatchFileContent.Substring(0, $BatchFileContent.LastIndexOf("`"C")) + `
+        "`"C:/burp/burpsuite_pro_v$Version.jar`""
+    Set-Content -Value $Command -Path Burp.bat
 }
 
 function Update-HelperFiles {
     if (-not (Test-Path .\HelperFilesUpdate.ps1)) {
-        $url = "https://raw.githubusercontent.com/Bubuto24/BSPro/main/HelperFilesUpdate.ps1"
-        Invoke-RestMethod $url -OutFile .\HelperFilesUpdate.ps1
+        $Branch = Get-Branch $debug
+        $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
+        Invoke-RestMethod $Url -OutFile .\HelperFilesUpdate.ps1
     }
-    powershell ./HelperFilesUpdate.ps1
+    if ($debug) {
+        powershell .\HelperFilesUpdate.ps1 -debug
+    }
+    else {
+        powershell .\HelperFilesUpdate.ps1
+    }
+    if ($LASTEXITCODE -eq 1) {
+        Write-Warning "There was a problem updating helper files."
+    }
+}
+
+function Assert-Versions {
+    param(
+        [Parameter(Mandatory)]
+        [object]$OldVersion,
+        [string]$NewVersion
+    )
+    if ($OldVersion -is [Array]) {
+        $OldVersion = $OldVersion[$OldVersion.Count - 1]
+    }
+    if ($NewVersion -eq $OldVersion) {
+        Write-Warning "Your version is up to date. There is no need to update."
+        Start-Burp
+    }
+}
+
+function Start-Burp {
+    Start-Process $BurpBatchFile -WindowStyle Hidden
+    Start-Sleep 3
+    Exit
 }
 
 function Update-Burp {
-    Write-Host "NOTE: PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." `
-        "`nIT WILL SCREW UP THE WHOLE PROCESS.`n" -ForegroundColor Cyan
+    Write-Warning ("PLEASE DO NOT CANCEL/CLOSE THE WINDOW WHEN THE SCRIPT IS RUNNING." +
+    "`nIT WILL SCREW UP THE WHOLE PROCESS.`n")
     $ProgressPreference = "SilentlyContinue"
 
-    Set-Location C:\Burp
-    $script:latestBurpVersion = Get-LatestBurpVersion
-
-    Remove-OldBurp
+    Set-Location $BurpPath
+    $script:ExistingBurp = Get-ChildItem -Path $BurpPath -Name "burpsuite*.jar"
+    $script:BurpBatchFile = Join-Path $BurpPath "Burp.bat"
+    $script:Version = Get-LatestBurpVersion
+    if ($Version -eq 1) {
+        Pause
+        Exit 1
+    }
+    Assert-Versions -NewVersion $Version -OldVersion $ExistingBurp
     Add-LatestBurp
     Edit-BatchFileCommand
     Update-HelperFiles
-
-    Write-Host "Burp Suite Professional has been updated to $latestBurpVersion." -ForegroundColor Green
-    Start-Process ./Burp.bat -WindowStyle Hidden
+    Remove-OldBurp
+    Write-Host "Burp Suite Professional has been updated to $Version." -ForegroundColor Green
     Write-Host "`nThis window will close in 3 seconds." -ForegroundColor Cyan
-    Start-Sleep 3
-    Exit
+    Start-Burp
 }
 
 function Main {
@@ -122,10 +134,10 @@ function Main {
     }
     else {
         Clear-Host
-        if (Test-BurpRunning) {
-            Write-Host "Please close all running instances of Burp Suite Professional before you run this script." `
-                -ForegroundColor Yellow
-            Exit-Program -ExitCode 1
+        if (Test-BurpInstanceRunning) {
+            Write-Warning "Please close all running instances of Burp Suite Professional before you run this script."
+            Pause
+            Exit 1
         }
         else {
             Update-Burp
