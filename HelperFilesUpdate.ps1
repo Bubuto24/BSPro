@@ -19,6 +19,7 @@ $Files = @{
     "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
     "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
     "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
+    "Common.psm1"         = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
 }
 
 $StringAsStream = [System.IO.MemoryStream]::new()
