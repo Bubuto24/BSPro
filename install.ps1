@@ -72,16 +72,15 @@ function Rename-ExistingBurpFolder {
         Write-Host "$BurpPath exists."
         Rename-Item $BurpPath "$BurpPathTemp"
         Write-Host "Temporarily moved $BurpPath to $BurpPathTemp"
-    }
-    else {
         Add-Folder
-        Write-Host "$BurpPath created."
     }
+    Add-Folder
+    Write-Host "$BurpPath created."
 }
 
 function Remove-ExistingFiles {
     if (Test-Path $BurpPathTemp) {
-        Remove-Item -Type Directory $BurpPathTemp -Recurse -Force
+        Remove-Item -Path $BurpPathTemp -Recurse -Force
         Write-Host "Old files have been deleted."
     }
 }
