@@ -115,7 +115,6 @@ function Add-BatchFile {
 
 function Add-GithubFiles {
     $Branch = Get-Branch
-    $GithubUsername = "Bubuto24"
     $Files = @{
         "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
         "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
@@ -177,10 +176,14 @@ function Start-BurpInstallation {
 
 function Get-Branch {
     if ($debug) {
-        return "refactor"
+        return $DebugBranch
     }
     return "main"
 }
+
+# Edit these 2 variables
+$DebugBranch = "refactor"
+$GithubUsername = "Bubuto24"
 
 # Main flow
 $ProgressPreference = "SilentlyContinue"
