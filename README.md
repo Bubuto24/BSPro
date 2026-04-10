@@ -40,5 +40,10 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.
 * As a workaround, the installation script will provide a launcher (VBS script) that will provide for both the launching of BSPro and checking of updates.
 <br>
 
+# Debug
+```
+irm https://github.com/Bubuto24/BSPro/raw/refs/heads/refactor/install.ps1 > install.ps1
+```
+
 # References
-[BSPro](https://github.com/xiv3r/Burpsuite-Professional) by xiv3r
+[BSPro](https://github.com/xiv3r/Burpsuite-Professional) by xiv3r 
