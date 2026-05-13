@@ -95,8 +95,8 @@ function Add-Folder {
 
 function Add-Burp {
     Write-Host "Downloading Burp Suite Professional..."
-    $url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$Version"
-    Invoke-WebRequest -Uri $url -OutFile "burpsuite_pro_v$Version.jar"
+    $url = "https://portswigger-cdn.net/burp/releases/download?product=desktop&type=Jar&version=$Version"
+    Invoke-WebRequest -Uri $url -OutFile "burpsuite_desktop_v$Version.jar"
     Write-Host "Burp Suite Professional $Version is downloaded."
 }
 
@@ -109,7 +109,7 @@ function Add-BatchFile {
     "--add-opens=java.base/jdk.internal.org.objectweb.asm.Opcodes=ALL-UNNAMED " +
     "-javaagent:`"$BurpPath\loader.jar`" " +
     "-noverify " +
-    "-jar `"$BurpPath\burpsuite_pro_v$Version.jar`""
+    "-jar `"$BurpPath\burpsuite_desktop_v$Version.jar`""
     
     Set-Content -Path Burp.bat -Value $Command
     Write-Host "Batch file is created."
@@ -122,16 +122,6 @@ function Add-GithubFiles {
     if ($debug) {
         $Files += "Uninstall.ps1"
     }
-    # $Files = @{
-    #     "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
-    #     "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
-    #     "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
-    #     "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
-    #     "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
-    #     "bspro.ico"             = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/bspro.ico"
-    #     "Common.psm1"           = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
-    #     "Uninstall.ps1"         = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$Uninstall.ps1"
-    # }
     foreach ($File in $Files) {
         $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$File"
         try {
@@ -177,7 +167,7 @@ function Move-UninstallScriptToDesktop {
     $UninstallScriptName = "Uninstall.ps1"
     $UninstallScriptPath = Join-Path -Path $BurpPath -ChildPath $UninstallScriptName
     if (Test-Path $UninstallScriptPath) {
-        Move-Item $UninstallScriptPath $(Join-Path -Path $DesktopPath -ChildPath $UninstallScriptName)
+        Move-Item $UninstallScriptPath $(Join-Path -Path $DesktopPath -ChildPath $UninstallScriptName) -Force
     }
     Write-Host "Moved uninstall script to $DesktopPath."
 }
