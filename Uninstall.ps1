@@ -2,6 +2,7 @@
 # Note that license details are still stored in local machine if Java is not removed
 
 $ErrorActionPreference = "Stop"
+$DesktopPath = [System.Environment]::GetFolderPath("Desktop")
 function Remove-BurpDirectory {
     $BurpPath = "C:\Burp"
     if (Test-Path $BurpPath) {
@@ -11,8 +12,7 @@ function Remove-BurpDirectory {
 }
 
 function Remove-Shortcut {
-    $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
-    $Shortcuts = @("BSPro Debug.lnk", "BSPro.lnk")
+    $Shortcuts = @("BSPro Debug.lnk", "Burp Suite Professional.lnk")
     foreach ($Shortcut in $Shortcuts) {
         if (Test-Path $(Join-Path -Path $DesktopPath -ChildPath $Shortcut)) {
             Remove-Item -Path $Shortcut -Force
@@ -21,11 +21,19 @@ function Remove-Shortcut {
     Write-Host "Shortcuts removed."
 }
 
+function Remove-UninstallerBatchScript {
+    Remove-Item -Path $(Join-Path $DesktopPath -ChildPath "UninstallBurpSuite.cmd") -Force
+    Write-Host "Removed Burp Suite uninstallation batch script."
+}
+
+
 function Main {
     Write-Host "Start uninstallation process.`n" -ForegroundColor Cyan
     Remove-BurpDirectory
     Remove-Shortcut
+    Remove-UninstallerBatchScript
     Write-Host "`nUninstallation process finished." -ForegroundColor Green
+    Pause
 }
 
 Main
