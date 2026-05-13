@@ -33,7 +33,6 @@ function Main {
     Remove-Shortcut
     Remove-UninstallerBatchScript
     Write-Host "`nUninstallation process finished." -ForegroundColor Green
-    Pause
 }
 
 Main
