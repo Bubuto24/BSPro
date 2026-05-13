@@ -163,17 +163,16 @@ function Add-DebugShortcut {
     Write-Host "Debug shortcut has been created in desktop."
 }
 
-function Move-UninstallScriptToDesktop {
-    $UninstallScriptName = "Uninstall.ps1"
-    $UninstallScriptPath = Join-Path -Path $BurpPath -ChildPath $UninstallScriptName
-    if (Test-Path $UninstallScriptPath) {
-        Move-Item $UninstallScriptPath $(Join-Path -Path $DesktopPath -ChildPath $UninstallScriptName) -Force
-    }
-    Write-Host "Moved uninstall script to $DesktopPath."
+function Add-UninstallBatchScriptToDesktop {
+    $UninstallBatchScriptPath = Join-Path $DesktopPath -ChildPath "UninstallBurpSuite.cmd"
+    $UninstallPSScriptPath = Join-Path $DesktopPath -ChildPath "Uninstall.ps1"
+    $FileContent = "@echo off`n" `
+        + "cmd /c `"$UninstallPSScriptPath`""
+    Set-Content -Path $UninstallBatchScriptPath -Value $FileContent
+    Write-Host "Uninstall batch script created at `"$DesktopPath`""
 }
 
 function Start-BurpInstallation {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User") 
     Write-Host "Start key generator"
     Start-process java.exe -ArgumentList "-jar loader.jar" -WindowStyle Hidden
     Write-Host "Start Burp Suite Professional"
@@ -210,9 +209,9 @@ Install-JavaComponents
 Add-Files
 if ($debug) {
     Add-DebugShortcut
-    Move-UninstallScriptToDesktop
 }
 Add-RealShortcut
+Add-UninstallBatchScriptToDesktop
 Remove-ExistingFiles
 Start-BurpInstallation
 Set-Location $CurrentDirectory
