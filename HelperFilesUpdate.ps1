@@ -15,33 +15,32 @@ function Get-RemoteFileHash {
 }
 
 $Branch = Get-Branch $debug
-$Files = @{
-    "CheckUpdate.ps1"     = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
-    "BurpSuiteUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
-    "BurpSuitePro.vbs"    = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
-    "Common.psm1"         = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
+$Files = @("CheckUpdate.ps1", "BurpSuiteUpdate.ps1", "BurpSuitePro.vbs", "Common.psm1")
+if ($Branch -ne "main") {
+    $Files += "Uninstall.ps1"
 }
 
 $StringAsStream = [System.IO.MemoryStream]::new()
 $Writer = [System.IO.StreamWriter]::new($StringAsStream)
 $Writer.AutoFlush = $true
 
-$Failed = @()
+$Failed = [System.Collections.Generic.List[string]]::new()
 
-foreach ($File in $Files.GetEnumerator()) {
+foreach ($File in $Files) {
     try {
-        $FilePath = Join-Path C:\Burp $File.Key
+        $FilePath = Join-Path $BurpPath $File
         $LocalFileHash = $(Get-FileHash $FilePath).Hash
-        $Response = Invoke-RestMethod -Uri $File.Value -ErrorAction Stop
+        $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$File"
+        $Response = Invoke-RestMethod -Uri $Url -ErrorAction Stop
         $RemoteFileHash = Get-RemoteFileHash -RemoteFileContent $Response
         if ($LocalFileHash -ne $RemoteFileHash) {
             Set-Content -Value $Response -Path $FilePath -NoNewline
-            Write-Host "$($File.Key) has been updated." -ForegroundColor Green
+            Write-Host "$($File) has been updated." -ForegroundColor Green
         }
     }
     catch {
-        Write-Host "Failed to update $($File.Key): `n$($_.Exception.Message)" -ForegroundColor Red
-        $Failed += $File.Key
+        Write-Host "Failed to update $($File): `n$($_.Exception.Message)" -ForegroundColor Red
+        $Failed.Add($File)
     }
     finally {
         $StringAsStream.SetLength(0)
