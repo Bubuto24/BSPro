@@ -4,7 +4,7 @@
 function Remove-BurpDirectory {
     $BurpPath = "C:\Burp"
     if (Test-Path $BurpPath) {
-        Remove-Item -ItemType Directory -Path $BurpPath -Recurse -Force
+        Remove-Item -Path $BurpPath -Recurse -Force
     }
     Write-Host "Removed $BurpPath."
 }
