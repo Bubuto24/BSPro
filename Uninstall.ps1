@@ -1,6 +1,7 @@
 # Uninstall BurpSuite
 # Note that license details are still stored in local machine if Java is not removed
 
+$ErrorActionPreference = "Stop"
 function Remove-BurpDirectory {
     $BurpPath = "C:\Burp"
     if (Test-Path $BurpPath) {
