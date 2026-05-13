@@ -11,7 +11,7 @@ function Get-LatestBurpInfo {
             $_.releaseChannels -eq "Stable"
         }
         foreach ($Release in $StableReleases) {
-            if ($Release.categories -contains "Professional") {
+            if ($Release.categories -contains "Desktop") {
                 return $Release
             }
         }
@@ -70,6 +70,6 @@ $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 # Rename these 2 variables
 $GithubUsername = "Bubuto24"
-$DebugBranch = "refactor"
+$DebugBranch = "dev"
 $ErrorActionPreference = "Stop"
 Export-ModuleMember -Function * -Variable *

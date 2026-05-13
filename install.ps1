@@ -14,7 +14,7 @@ function Get-LatestBurpVersion {
             $_.releaseChannels -eq "Stable"
         }
         foreach ($Release in $StableReleases) {
-            if ($Release.categories -contains "Professional") {
+            if ($Release.categories -contains "Desktop") {
                 return $Release.Version
             }
         }
