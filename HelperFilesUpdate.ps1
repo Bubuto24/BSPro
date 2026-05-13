@@ -15,10 +15,7 @@ function Get-RemoteFileHash {
 }
 
 $Branch = Get-Branch $debug
-$Files = @("CheckUpdate.ps1", "BurpSuiteUpdate.ps1", "BurpSuitePro.vbs", "Common.psm1")
-if ($Branch -ne "main") {
-    $Files += "Uninstall.ps1"
-}
+$Files = @("CheckUpdate.ps1", "BurpSuiteUpdate.ps1", "BurpSuitePro.vbs", "Common.psm1", "HelperFilesUpdate.ps1", "Uninstall.ps1")
 
 $StringAsStream = [System.IO.MemoryStream]::new()
 $Writer = [System.IO.StreamWriter]::new($StringAsStream)
