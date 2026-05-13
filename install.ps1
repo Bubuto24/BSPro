@@ -117,22 +117,29 @@ function Add-BatchFile {
 
 function Add-GithubFiles {
     $Branch = Get-Branch
-    $Files = @{
-        "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
-        "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
-        "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
-        "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
-        "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
-        "bspro.ico"             = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/bspro.ico"
-        "Common.psm1"           = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
+    $Files = @("loader.jar", "CheckUpdate.ps1", "BurpSuiteUpdate.ps1", "HelperFilesUpdate.ps1", `
+            "BurpSuitePro.vbs", "bspro.ico", "Common.psm1")
+    if ($debug) {
+        $Files += "Uninstall.ps1"
     }
-    foreach ($File in $Files.GetEnumerator()) {
+    # $Files = @{
+    #     "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
+    #     "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
+    #     "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
+    #     "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
+    #     "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
+    #     "bspro.ico"             = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/bspro.ico"
+    #     "Common.psm1"           = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
+    #     "Uninstall.ps1"         = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$Uninstall.ps1"
+    # }
+    foreach ($File in $Files) {
+        $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$File"
         try {
-            Invoke-WebRequest -Uri $File.Value -OutFile $File.Key -UseBasicParsing -ErrorAction Stop
+            Invoke-WebRequest -Uri $Url -OutFile $File -UseBasicParsing -ErrorAction Stop
         }
         catch {
-            Write-Host $File.Value
-            Write-Error "Failed to download $($File.Key): `n$($_.Exception.Message)"
+            Write-Host $Url
+            Write-Error "Failed to download $($File): `n$($_.Exception.Message)"
         }
     }
     Write-Host "Helper files have been added."
@@ -145,7 +152,6 @@ function Add-Files {
 }
 
 function Add-RealShortcut {
-    $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
     $WshShell = New-Object -COMObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut("$DesktopPath/Burp Suite Professional.lnk")
     $Shortcut.TargetPath = "$BurpPath\BurpSuitePro.vbs"
@@ -165,6 +171,15 @@ function Add-DebugShortcut {
     $Shortcut.Save()
     [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) > $null
     Write-Host "Debug shortcut has been created in desktop."
+}
+
+function Move-UninstallScriptToDesktop {
+    $UninstallScriptName = "Uninstall.ps1"
+    $UninstallScriptPath = Join-Path -Path $BurpPath -ChildPath $UninstallScriptName
+    if (Test-Path $UninstallScriptPath) {
+        Move-Item $UninstallScriptPath $(Join-Path -Path $DesktopPath -ChildPath $UninstallScriptName)
+    }
+    Write-Host "Moved uninstall script to $DesktopPath."
 }
 
 function Start-BurpInstallation {
@@ -205,6 +220,7 @@ Install-JavaComponents
 Add-Files
 if ($debug) {
     Add-DebugShortcut
+    Move-UninstallScriptToDesktop
 }
 Add-RealShortcut
 Remove-ExistingFiles
