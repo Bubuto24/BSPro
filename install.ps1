@@ -157,7 +157,6 @@ function Add-RealShortcut {
 }
 
 function Add-DebugShortcut {
-    $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
     $WshShell = New-Object -COMObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut("$DesktopPath/BSPro Debug.lnk")
     $Shortcut.TargetPath = "wscript.exe"
@@ -184,7 +183,7 @@ function Get-Branch {
 }
 
 # Edit these 2 variables
-$DebugBranch = "refactor"
+$DebugBranch = "dev"
 $GithubUsername = "Bubuto24"
 
 # Main flow
@@ -194,6 +193,7 @@ $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 $CurrentDirectory = Get-Location
 $Version = Get-LatestBurpVersion
+$DesktopPath = [System.Environment]::GetFolderPath("Desktop")
 $SystemPackages = Get-Package
 if ($Version -eq 1) {
     Pause
