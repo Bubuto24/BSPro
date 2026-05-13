@@ -24,7 +24,7 @@ function Main {
     Write-Host "Start uninstallation process.`n" -ForegroundColor Cyan
     Remove-BurpDirectory
     Remove-Shortcut
-    Write-Host "`nUninstallation process finished." -ForegroundColor Magenta
+    Write-Host "`nUninstallation process finished." -ForegroundColor Green
 }
 
 Main
