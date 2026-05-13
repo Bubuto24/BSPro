@@ -167,7 +167,7 @@ function Add-UninstallBatchScriptToDesktop {
     $UninstallBatchScriptPath = Join-Path $DesktopPath -ChildPath "UninstallBurpSuite.cmd"
     $UninstallPSScriptPath = Join-Path $DesktopPath -ChildPath "Uninstall.ps1"
     $FileContent = "@echo off`n" `
-        + "cmd /c `"$UninstallPSScriptPath`""
+        + "powershell -File `"$UninstallPSScriptPath`""
     Set-Content -Path $UninstallBatchScriptPath -Value $FileContent
     Write-Host "Uninstall batch script created at `"$DesktopPath`""
 }
