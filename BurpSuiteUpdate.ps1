@@ -24,7 +24,7 @@ function Remove-OldBurp {
 function Add-LatestBurp {
     try {
         Write-Host "Downloading the latest version of Burp Suite Professional..."
-        $Url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$Version"
+        $Url = "https://portswigger-cdn.net/burp/releases/download?product=desktop&type=Jar&version=$Version"
         Invoke-WebRequest -Uri $Url -OutFile "burpsuite_desktop_v$Version.jar" -ErrorAction Stop
         Write-Host "`nBurp Suite Professional download successful." -ForegroundColor Green    
     }
