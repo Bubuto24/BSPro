@@ -22,6 +22,11 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.
 ```
 <br>
 
+# Uninstall
+* Just run `UninstallBurpSuite.cmd` in your desktop, or `Uninstall.ps1` in `C:/Burp`
+* Do note that Java is not uninstalled
+<br>
+
 # Features
 * Built-in checking of updates upon launching shortcut.
 * Shortcut to launcher(vbs) is created at desktop.
@@ -39,10 +44,10 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/main/install.ps1 > install.
 
 # Debug steps
 ```
-irm https://github.com/<GithubUsername>/BSPro/raw/refs/heads/<branch>/install.ps1 > install.ps1
+irm https://github.com/Bubuto24/BSPro/raw/refs/heads/dev/install.ps1 > install.ps1
 ```
 ```
-./install.ps1
+./install.ps1 -debug
 ```
 
 # References

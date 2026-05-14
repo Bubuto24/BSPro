@@ -24,13 +24,17 @@ function Remove-OldBurp {
 function Add-LatestBurp {
     try {
         Write-Host "Downloading the latest version of Burp Suite Professional..."
-        $Url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$Version"
-        Invoke-WebRequest -Uri $Url -OutFile "burpsuite_pro_v$Version.jar" -ErrorAction Stop
+        $Url = "https://portswigger-cdn.net/burp/releases/download?product=desktop&type=Jar&version=$Version"
+        Invoke-WebRequest -Uri $Url -OutFile "burpsuite_desktop_v$Version.jar" -ErrorAction Stop
         Write-Host "`nBurp Suite Professional download successful." -ForegroundColor Green    
     }
     catch {
         Write-Host "Error occurred in $($MyInvocation.MyCommand.Name)" -ForegroundColor Red
         Write-Host $_.Exception.Message -ForegroundColor Red
+        if (Test-Path "burpsuite_desktop_v$Version.jar") {
+            Remove-Item "burpsuite_desktop_v$Version.jar"
+        }
+        # Backwards compatibility
         if (Test-Path "burpsuite_pro_v$Version.jar") {
             Remove-Item "burpsuite_pro_v$Version.jar"
         }
@@ -63,7 +67,7 @@ function Test-AdminPrivileges {
 function Edit-BatchFileCommand {
     $BatchFileContent = Get-Content Burp.bat
     $Command = $BatchFileContent.Substring(0, $BatchFileContent.LastIndexOf("`"C")) + `
-        "`"C:/burp/burpsuite_pro_v$Version.jar`""
+        "`"C:/burp/burpsuite_desktop_v$Version.jar`""
     Set-Content -Value $Command -Path Burp.bat
 }
 
@@ -74,10 +78,10 @@ function Update-HelperFiles {
         Invoke-RestMethod $Url -OutFile .\HelperFilesUpdate.ps1
     }
     if ($debug) {
-        powershell .\HelperFilesUpdate.ps1 -debug
+        powershell -File $PSScriptRoot\HelperFilesUpdate.ps1 -debug
     }
     else {
-        powershell .\HelperFilesUpdate.ps1
+        powershell -File $PSScriptRoot\HelperFilesUpdate.ps1
     }
     if ($LASTEXITCODE -eq 1) {
         Write-Warning "There was a problem updating helper files."

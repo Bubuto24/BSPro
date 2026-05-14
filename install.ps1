@@ -14,7 +14,7 @@ function Get-LatestBurpVersion {
             $_.releaseChannels -eq "Stable"
         }
         foreach ($Release in $StableReleases) {
-            if ($Release.categories -contains "Professional") {
+            if ($Release.categories -contains "Desktop") {
                 return $Release.Version
             }
         }
@@ -70,13 +70,13 @@ function Rename-ExistingBurpFolder {
     # Rename folder if detected
     if (Test-Path $BurpPath) {
         Write-Host "$BurpPath exists."
-        if (-not (Test-Path $BurpPathTemp)) {
-            Rename-Item $BurpPath "$BurpPathTemp"
-            Write-Host "Temporarily moved $BurpPath to $BurpPathTemp"
+        if (Test-Path $BurpPathTemp) {
+            Write-Host "Removing $BurpPathTemp."
+            Remove-Item $BurpPathTemp -Recurse -Force
+            Write-Host "$BurpPathTemp removed."
         }
-        else {
-            Write-Host "$BurpPathTemp exists."
-        }
+        Rename-Item $BurpPath "$BurpPathTemp"
+        Write-Host "Temporarily moved $BurpPath to $BurpPathTemp."
     }
     Add-Folder
     Write-Host "$BurpPath created."
@@ -95,8 +95,8 @@ function Add-Folder {
 
 function Add-Burp {
     Write-Host "Downloading Burp Suite Professional..."
-    $url = "https://portswigger-cdn.net/burp/releases/download?product=pro&type=Jar&version=$Version"
-    Invoke-WebRequest -Uri $url -OutFile "burpsuite_pro_v$Version.jar"
+    $url = "https://portswigger-cdn.net/burp/releases/download?product=desktop&type=Jar&version=$Version"
+    Invoke-WebRequest -Uri $url -OutFile "burpsuite_desktop_v$Version.jar"
     Write-Host "Burp Suite Professional $Version is downloaded."
 }
 
@@ -109,7 +109,7 @@ function Add-BatchFile {
     "--add-opens=java.base/jdk.internal.org.objectweb.asm.Opcodes=ALL-UNNAMED " +
     "-javaagent:`"$BurpPath\loader.jar`" " +
     "-noverify " +
-    "-jar `"$BurpPath\burpsuite_pro_v$Version.jar`""
+    "-jar `"$BurpPath\burpsuite_desktop_v$Version.jar`""
     
     Set-Content -Path Burp.bat -Value $Command
     Write-Host "Batch file is created."
@@ -117,22 +117,19 @@ function Add-BatchFile {
 
 function Add-GithubFiles {
     $Branch = Get-Branch
-    $Files = @{
-        "loader.jar"            = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/loader.jar"
-        "CheckUpdate.ps1"       = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/CheckUpdate.ps1"
-        "BurpSuiteUpdate.ps1"   = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuiteUpdate.ps1"
-        "HelperFilesUpdate.ps1" = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/HelperFilesUpdate.ps1"
-        "BurpSuitePro.vbs"      = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/BurpSuitePro.vbs"
-        "bspro.ico"             = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/bspro.ico"
-        "Common.psm1"           = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/Common.psm1"
+    $Files = @("loader.jar", "CheckUpdate.ps1", "BurpSuiteUpdate.ps1", "HelperFilesUpdate.ps1", `
+            "BurpSuitePro.vbs", "bspro.ico", "Common.psm1")
+    if ($debug) {
+        $Files += "Uninstall.ps1"
     }
-    foreach ($File in $Files.GetEnumerator()) {
+    foreach ($File in $Files) {
+        $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$File"
         try {
-            Invoke-WebRequest -Uri $File.Value -OutFile $File.Key -UseBasicParsing -ErrorAction Stop
+            Invoke-WebRequest -Uri $Url -OutFile $File -UseBasicParsing -ErrorAction Stop
         }
         catch {
-            Write-Host $File.Value
-            Write-Error "Failed to download $($File.Key): `n$($_.Exception.Message)"
+            Write-Host $Url
+            Write-Error "Failed to download $($File): `n$($_.Exception.Message)"
         }
     }
     Write-Host "Helper files have been added."
@@ -145,7 +142,6 @@ function Add-Files {
 }
 
 function Add-RealShortcut {
-    $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
     $WshShell = New-Object -COMObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut("$DesktopPath/Burp Suite Professional.lnk")
     $Shortcut.TargetPath = "$BurpPath\BurpSuitePro.vbs"
@@ -157,7 +153,6 @@ function Add-RealShortcut {
 }
 
 function Add-DebugShortcut {
-    $DesktopPath = [System.Environment]::GetFolderPath("Desktop")
     $WshShell = New-Object -COMObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut("$DesktopPath/BSPro Debug.lnk")
     $Shortcut.TargetPath = "wscript.exe"
@@ -168,8 +163,23 @@ function Add-DebugShortcut {
     Write-Host "Debug shortcut has been created in desktop."
 }
 
+function Add-UninstallBatchScriptToDesktop {
+    $UninstallBatchScriptPath = Join-Path $DesktopPath -ChildPath "UninstallBurpSuite.cmd"
+    $UninstallPSScriptPath = Join-Path $BurpPath -ChildPath "Uninstall.ps1"
+    $FileContent = "@echo off`n" +
+    "powershell -File `"$UninstallPSScriptPath`"`n" +
+    "IF %ERRORLEVEL% EQU 0 (`n" +
+    "   Pause`n" +
+    "   (goto) 2>nul & del `"%~f0`"`n" +
+    ") ELSE (`n" +
+    "   echo Uninstallation process has gone wrong somewhere.`n" +
+    "   Pause`n" +
+    ")"
+    Set-Content -Path $UninstallBatchScriptPath -Value $FileContent
+    Write-Host "Uninstall batch script created at `"$DesktopPath`""
+}
+
 function Start-BurpInstallation {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User") 
     Write-Host "Start key generator"
     Start-process java.exe -ArgumentList "-jar loader.jar" -WindowStyle Hidden
     Write-Host "Start Burp Suite Professional"
@@ -184,7 +194,7 @@ function Get-Branch {
 }
 
 # Edit these 2 variables
-$DebugBranch = "refactor"
+$DebugBranch = "dev"
 $GithubUsername = "Bubuto24"
 
 # Main flow
@@ -194,6 +204,7 @@ $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 $CurrentDirectory = Get-Location
 $Version = Get-LatestBurpVersion
+$DesktopPath = [System.Environment]::GetFolderPath("Desktop")
 $SystemPackages = Get-Package
 if ($Version -eq 1) {
     Pause
@@ -207,6 +218,7 @@ if ($debug) {
     Add-DebugShortcut
 }
 Add-RealShortcut
+Add-UninstallBatchScriptToDesktop
 Remove-ExistingFiles
 Start-BurpInstallation
 Set-Location $CurrentDirectory

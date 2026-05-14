@@ -11,26 +11,10 @@ function Get-LatestBurpInfo {
             $_.releaseChannels -eq "Stable"
         }
         foreach ($Release in $StableReleases) {
-            if ($Release.categories -contains "Professional") {
+            if ($Release.categories -contains "Desktop") {
                 return $Release
             }
         }
-        # $Response = Invoke-WebRequest -Uri $Url -UseBasicParsing -ErrorAction Stop
-        # if ($Response.StatusCode -eq 200) {
-        #     $Json = $Response.Content | ConvertFrom-Json
-        #     $StableReleases = $Json.ResultSet.Results | Where-Object {
-        #         $_.releaseChannels -eq "Stable"
-        #     }
-        #     foreach ($Release in $StableReleases) {
-        #         if ($Release.categories -contains "Professional") {
-        #             return $Release
-        #         }
-        #     }
-        # }
-        # For non error status codes that aren't 200
-        # else {
-        #     throw "HTTP $($Response.StatusCode): $($Response.StatusDescription)"
-        # }
     }
     catch {
         Write-Host "Error occurred in $($MyInvocation.MyCommand.Name)" -ForegroundColor Red
@@ -70,6 +54,6 @@ $BurpPath = "C:\Burp"
 $BurpPathTemp = "$BurpPath.old"
 # Rename these 2 variables
 $GithubUsername = "Bubuto24"
-$DebugBranch = "refactor"
+$DebugBranch = "dev"
 $ErrorActionPreference = "Stop"
 Export-ModuleMember -Function * -Variable *
