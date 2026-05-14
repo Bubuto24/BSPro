@@ -13,12 +13,16 @@ function Remove-BurpDirectory {
 
 function Remove-Shortcut {
     $Shortcuts = @("BSPro Debug.lnk", "Burp Suite Professional.lnk")
+    $ShortcutsRemoved = $false
     foreach ($Shortcut in $Shortcuts) {
         if (Test-Path $(Join-Path -Path $DesktopPath -ChildPath $Shortcut)) {
             Remove-Item -Path $Shortcut -Force
+            $ShortcutsRemoved = $true
         }
     }
-    Write-Host "Shortcuts removed."
+    if ($ShortcutsRemoved) {
+        Write-Host "Shortcuts removed."
+    }
 }
 
 function Main {
