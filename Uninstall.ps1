@@ -21,17 +21,17 @@ function Remove-Shortcut {
     Write-Host "Shortcuts removed."
 }
 
-function Remove-UninstallerBatchScript {
-    Remove-Item -Path $(Join-Path $DesktopPath -ChildPath "UninstallBurpSuite.cmd") -Force
-    Write-Host "Removed Burp Suite uninstallation batch script."
-}
+# function Remove-UninstallerBatchScript {
+#     Remove-Item -Path $(Join-Path $DesktopPath -ChildPath "UninstallBurpSuite.cmd") -Force
+#     Write-Host "Removed Burp Suite uninstallation batch script."
+# }
 
 
 function Main {
     Write-Host "Start uninstallation process.`n" -ForegroundColor Cyan
     Remove-BurpDirectory
     Remove-Shortcut
-    Remove-UninstallerBatchScript
+    # Remove-UninstallerBatchScript
     Write-Host "`nUninstallation process finished." -ForegroundColor Green
 }
 
