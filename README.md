@@ -52,3 +52,5 @@ irm https://github.com/Bubuto24/BSPro/raw/refs/heads/dev/install.ps1 > install.p
 
 # References
 [BSPro](https://github.com/xiv3r/Burpsuite-Professional) by xiv3r 
+
+[Icon](https://images.g2crowd.com/uploads/product/image/99175e3285300056ba7b128cb4f17fa9/burp-suite.png)
