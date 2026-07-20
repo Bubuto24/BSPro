@@ -26,6 +26,9 @@ $Failed = [System.Collections.Generic.List[string]]::new()
 foreach ($File in $Files) {
     try {
         $FilePath = Join-Path $BurpPath $File
+        if (-not(Test-Path $FilePath)) {
+            New-Item -ItemType File -Path $BurpPath -Name $File | Out-Null
+        }
         $LocalFileHash = $(Get-FileHash $FilePath).Hash
         $Url = "https://raw.githubusercontent.com/$GithubUsername/BSPro/$Branch/$File"
         $Response = Invoke-RestMethod -Uri $Url -ErrorAction Stop
